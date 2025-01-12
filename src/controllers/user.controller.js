@@ -27,7 +27,8 @@ const generateAccessAndRefereshTokens = async(userId) =>{
 }
 
 const registerUser = asyncHandler( async (req, res) => {
-    // get user details from frontend
+   try {
+     // get user details from frontend
     // validation - not empty
     // check if user already exists: username, email
     // check for images, check for avatar
@@ -56,7 +57,7 @@ const registerUser = asyncHandler( async (req, res) => {
     }
     //console.log(req.files);
 
-    const avatarLocalPath = req.files?.avatar[0]?.path;
+    const avatarLocalPath = req.files?.avatar?.[0]?.path;
     //const coverImageLocalPath = req.files?.coverImage[0]?.path;
 
     let coverImageLocalPath;
@@ -98,10 +99,14 @@ const registerUser = asyncHandler( async (req, res) => {
         new ApiResponse(200, createdUser, "User registered Successfully")
     )
 
+   } catch (error) {
+    res.status(500).send({success:false, error:error.message})
+   }
 } )
 
 const loginUser = asyncHandler(async (req, res) =>{
-    // req body -> data
+  try {
+      // req body -> data
     // username or email
     //find the user
     //password check
@@ -109,7 +114,6 @@ const loginUser = asyncHandler(async (req, res) =>{
     //send cookie
 
     const {email, username, password} = req.body
-    console.log(email);
 
     if ( !email) {
         throw new ApiError(400, "username or email is required")
@@ -160,6 +164,10 @@ const loginUser = asyncHandler(async (req, res) =>{
         )
     )
 
+}
+   catch (error) {
+    res.send({success:false, error:error.message})
+  }
 })
 
 const logoutUser = asyncHandler(async(req, res) => {
